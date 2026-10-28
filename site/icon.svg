@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="HAUL">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16325e"/>
+      <stop offset="1" stop-color="#070b13"/>
+    </linearGradient>
+    <linearGradient id="peak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ab4ff"/>
+      <stop offset="1" stop-color="#2b4a80"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#sky)"/>
+  <!-- mountains -->
+  <path d="M28 352 170 150l64 88 52-66 198 180z" fill="url(#peak)" opacity=".9"/>
+  <path d="M170 150l-34 48 20-6 14 20 16-22 20 10z" fill="#eaf2ff"/>
+  <path d="M286 172l-26 33 16-4 12 14 14-16 14 6z" fill="#eaf2ff"/>
+  <!-- road -->
+  <rect x="0" y="398" width="512" height="114" fill="#0a0f18"/>
+  <rect x="40" y="446" width="70" height="10" rx="5" fill="#fbbf24"/>
+  <rect x="160" y="446" width="70" height="10" rx="5" fill="#fbbf24"/>
+  <rect x="280" y="446" width="70" height="10" rx="5" fill="#fbbf24"/>
+  <rect x="400" y="446" width="70" height="10" rx="5" fill="#fbbf24"/>
+  <!-- trailer -->
+  <rect x="44" y="282" width="226" height="112" rx="12" fill="#f2f5f9"/>
+  <rect x="58" y="298" width="198" height="10" rx="5" fill="#4f8dff"/>
+  <path d="M270 372h40" stroke="#f2f5f9" stroke-width="10" stroke-linecap="round"/>
+  <!-- truck -->
+  <path d="M306 320h70l34 40h44a14 14 0 0 1 14 14v26H306z" fill="#4f8dff"/>
+  <path d="M384 330h-8v34h44z" fill="#bcd4ff"/>
+  <!-- wheels -->
+  <g fill="#070b13" stroke="#f2f5f9" stroke-width="9">
+    <circle cx="112" cy="402" r="26"/>
+    <circle cx="174" cy="402" r="26"/>
+    <circle cx="346" cy="402" r="26"/>
+    <circle cx="430" cy="402" r="26"/>
+  </g>
+</svg>

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0a0c10">
+  <meta name="description" content="Missoula → Coeur d'Alene tow-rig dashboard: go/no-go, pass conditions, cams, wind and departure planning.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HAUL">
+  <title>HAUL · Missoula → Coeur d'Alene</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <!-- cam images load no-cors, so preconnect without the crossorigin flag -->
+  <link rel="preconnect" href="https://mt.cdn.iteris-atis.com">
+  <link rel="preconnect" href="https://511.idaho.gov">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#views">Skip to content</a>
+
+  <header class="top" role="banner">
+    <div class="brand" aria-label="HAUL, Missoula to Coeur d'Alene">
+      <!-- Simplified mark for small sizes (the full icon.svg is too detailed at 36px). -->
+      <svg class="brand-ico" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="bmSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b3d72"/><stop offset="1" stop-color="#0a1220"/></linearGradient>
+          <clipPath id="bmClip"><rect width="40" height="40" rx="10"/></clipPath>
+        </defs>
+        <g clip-path="url(#bmClip)">
+          <rect width="40" height="40" fill="url(#bmSky)"/>
+          <path d="M2 27 13 11l6 8 4-5 15 13z" fill="#7aa7f5"/>
+          <path d="M13 11l-3 4.5 2-.6 1.3 1.6 1.6-1.8 2 .7z" fill="#eaf2ff"/>
+          <rect y="31" width="40" height="9" fill="#0a0f18"/>
+          <rect x="4" y="35" width="6" height="1.5" rx=".75" fill="#fbbf24"/>
+          <rect x="17" y="35" width="6" height="1.5" rx=".75" fill="#fbbf24"/>
+          <rect x="30" y="35" width="6" height="1.5" rx=".75" fill="#fbbf24"/>
+          <rect x="4" y="20" width="17" height="10" rx="1.5" fill="#f2f5f9"/>
+          <rect x="21" y="27" width="3" height="1.6" fill="#f2f5f9"/>
+          <path d="M24 22h5.5l3.5 4.5h3a1 1 0 0 1 1 1V31H24z" fill="#4f8dff"/>
+          <path d="M29 23.2h-1.3v3.3h3.9z" fill="#cfe0ff"/>
+          <g fill="#070b13" stroke="#f2f5f9" stroke-width="1.4">
+            <circle cx="9" cy="31" r="2.3"/><circle cx="15" cy="31" r="2.3"/>
+            <circle cx="27.5" cy="31" r="2.3"/><circle cx="33.5" cy="31" r="2.3"/>
+          </g>
+        </g>
+      </svg>
+      <div class="brand-txt">
+        <span class="brand-name">HAUL</span>
+        <span class="brand-route">MSO → CdA · I-90</span>
+      </div>
+    </div>
+    <p class="updated" id="updated">Loading…</p>
+    <div class="top-actions">
+      <button class="icon-btn" id="refreshBtn" type="button" aria-label="Refresh data"></button>
+      <button class="icon-btn" id="settingsBtn" type="button" aria-label="Trip settings: origin and destination"></button>
+    </div>
+  </header>
+
+  <div id="banners" class="banners"></div>
+  <div id="ptr" class="ptr" aria-hidden="true"></div>
+
+  <main id="views" class="views">
+    <section id="view-go" class="view scroll" aria-label="Go — trip dashboard"></section>
+    <section id="view-cams" class="view scroll" aria-label="Cameras"></section>
+    <section id="view-map" class="view no-ptr" aria-label="Map"></section>
+    <section id="view-wx" class="view scroll" aria-label="Weather"></section>
+    <section id="view-check" class="view scroll" aria-label="Pre-trip checklist"></section>
+    <section id="view-notices" class="view scroll" aria-label="Notices"></section>
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <button class="tab" type="button" data-tab="go"><span class="tab-ico"></span><span class="tab-lbl">Go</span></button>
+    <button class="tab" type="button" data-tab="cams"><span class="tab-ico"></span><span class="tab-lbl">Cams</span></button>
+    <button class="tab" type="button" data-tab="map"><span class="tab-ico"></span><span class="tab-lbl">Map</span></button>
+    <button class="tab" type="button" data-tab="wx"><span class="tab-ico"></span><span class="tab-lbl">Weather</span></button>
+    <button class="tab" type="button" data-tab="check"><span class="tab-ico"></span><span class="tab-lbl">Checklist</span></button>
+  </nav>
+
+  <!-- Fullscreen camera viewer -->
+  <div id="viewer" class="viewer" role="dialog" aria-modal="true" aria-label="Camera viewer" hidden></div>
+
+  <!-- Settings sheet: addresses live ONLY in this device's localStorage -->
+  <dialog id="settings" class="sheet" aria-labelledby="settingsTitle">
+    <form id="settingsForm" method="dialog">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <h2 id="settingsTitle">Trip addresses</h2>
+      <p class="muted">Used for the Google, Waze and Apple Maps buttons. Saved only on this phone — never uploaded.</p>
+      <label class="field">
+        <span>Origin</span>
+        <input id="setOrigin" name="origin" type="text" autocomplete="street-address" enterkeyhint="next">
+      </label>
+      <label class="field">
+        <span>Destination</span>
+        <input id="setDest" name="dest" type="text" autocomplete="street-address" enterkeyhint="done">
+      </label>
+      <label class="switch">
+        <input id="setReverse" type="checkbox">
+        <span class="switch-ui" aria-hidden="true"></span>
+        <span>Return trip (Coeur d'Alene → Missoula)</span>
+      </label>
+      <div class="sheet-actions">
+        <button class="btn" type="button" id="setClear">Clear</button>
+        <button class="btn" type="button" id="setCancel">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">HAUL needs JavaScript to show live conditions.</p></noscript>
+</body>
+</html>
