@@ -6,7 +6,7 @@
  * All paths are relative to the SW location, so it works under /haul/ on GitHub Pages.
  * Bump VERSION whenever shell files change.
  */
-const VERSION = 'haul-v2';
+const VERSION = 'haul-v3';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = 'haul-data';      // unversioned: keep last good data across deploys
 const RUNTIME_CACHE = 'haul-runtime'; // leaflet lib

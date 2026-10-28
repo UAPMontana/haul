@@ -722,3 +722,4 @@ body.viewer-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
 }
+.verdict-caution .verdict-word{font-size:clamp(48px,17vw,84px);white-space:nowrap}
